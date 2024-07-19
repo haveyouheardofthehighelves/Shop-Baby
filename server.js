@@ -11,9 +11,23 @@ const server = https.createServer({
 
 const wss = new WebSocket.Server({ server });
 
+let clientCount = 0;
+let uids = -1; 
+
 wss.on('connection', (ws) => {
+    uids++; 
+    clientCount++; 
+    console.log(`Client Connected. Total clients: ${clientCount}`);
+    
+    // Send UID message to the newly connected client
+    
+    ws.on('close', () => {
+        clientCount--;
+        console.log(`Client disconnected. Total clients: ${clientCount}`);
+    });
+
     ws.on('message', (message) => {
-        // Broadcast the message to all clients
+        // Broadcast the message to all clients except the sender
         wss.clients.forEach((client) => {
             if (client !== ws && client.readyState === WebSocket.OPEN) {
                 client.send(message.toString());
@@ -25,3 +39,4 @@ wss.on('connection', (ws) => {
 server.listen(8080, () => {
     console.log('Secure WebSocket server is running on wss://localhost:8080');
 });
+

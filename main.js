@@ -3,11 +3,9 @@ let remoteStream;
 let peerConnection;
 const APP_ID = "59402908069946a59af975578a750580";
 const token = null; 
-const uid = String(Math.floor(Math.random() * 10000));
-
 let client; 
 let channel;
-
+const uid = String(Math.floor(Math.random() * 10000));
 const servers = {
     iceServers: [
         {
@@ -16,7 +14,10 @@ const servers = {
     ]
 };
 
+const socket = new WebSocket('wss://192.168.0.77:8080');
+
 const init = async () => {
+    
     client = await AgoraRTM.createInstance(APP_ID);
     await client.login({ uid, token });
  
@@ -107,10 +108,10 @@ const addAnswer = async (answer) => {
     }
 };
 
+
 init();
 
 const display = document.getElementById('keypress-display');
-const socket = new WebSocket('wss://192.168.0.77:8080');
 
 document.addEventListener('keydown', (event) => {
     const keyName = event.key;
