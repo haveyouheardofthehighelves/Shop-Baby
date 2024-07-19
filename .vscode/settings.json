@@ -1,0 +1,11 @@
+{
+    "liveServer.settings.port": 5500,
+    "liveServer.settings.root": "/",
+    "liveServer.settings.CustomBrowser": "chrome",
+    "liveServer.settings.https": {
+      "enable": true,
+      "cert": "C:/Users/sethy/OneDrive/Documents/LiveUpdateTest/https/localhost.pem",
+      "key": "C:/Users/sethy/OneDrive/Documents/LiveUpdateTest/https/localhost.key",
+      "passphrase": "catfish533t"
+    }
+}
