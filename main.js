@@ -29,7 +29,7 @@ const init = async () => {
     client.on('MessageFromPeer', handleMessageFromPeer);
 
     localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-    document.getElementById('user-1').srcObject = localStream;
+    //document.getElementById('user-1').srcObject = localStream;
 
 };
 
@@ -62,7 +62,7 @@ const createPeerConnection = async (MemberId) => {
 
     if (!localStream) {
         localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-        document.getElementById('user-1').srcObject = localStream;
+        //document.getElementById('user-1').srcObject = localStream;
     }
 
     localStream.getTracks().forEach((track) => {
