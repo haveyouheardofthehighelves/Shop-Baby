@@ -112,13 +112,35 @@ const addAnswer = async (answer) => {
 init();
 
 const display = document.getElementById('keypress-display');
+const inputField = document.getElementById('Dialogue');
+const submitButton = document.querySelector('button');
 
 document.addEventListener('keydown', (event) => {
-    const keyName = event.key;
-    const message = `Key pressed: ${keyName}`;
-    display.textContent = message;
+    if (inputField != document.activeElement){
+        const keyName = event.key;
+        const message = `Key pressed: ${keyName}`;
+        display.textContent = message;
+        socket.send(message);
+    }
+});
+
+submitButton.addEventListener('click', () => {
+    const message = `Message from ${inputField.value}`;
     socket.send(message);
 });
+
+
+document.addEventListener('keyup', (event) => {
+    const keyName = event.key;
+    const message = `Key released: ${keyName}`;
+    // Check if the key released is the same as the key displayed
+    if (display.textContent === `Key pressed: ${keyName}` && inputField != document.activeElement) {
+        display.textContent = `Key pressed: `;
+        socket.send(display.textContent);
+    }
+});
+
+
 
 socket.addEventListener('message', (event) => {
     display.textContent = event.data;
