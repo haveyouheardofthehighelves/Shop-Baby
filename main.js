@@ -61,7 +61,7 @@ const createPeerConnection = async (MemberId) => {
     document.getElementById('user-2').srcObject = remoteStream;
 
     if (!localStream) {
-        localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
         //document.getElementById('user-1').srcObject = localStream;
     }
 
@@ -112,6 +112,7 @@ const addAnswer = async (answer) => {
 init();
 
 const display = document.getElementById('keypress-display');
+const dialogues = document.getElementById('talkers');
 const inputField = document.getElementById('Dialogue');
 const submitButton = document.querySelector('button');
 
@@ -125,7 +126,8 @@ document.addEventListener('keydown', (event) => {
 });
 
 submitButton.addEventListener('click', () => {
-    const message = `Message from ${inputField.value}`;
+    const message = `Dialogue: ${inputField.value}`;
+    dialogues.textContent = `Sent '${inputField.value}' to other client`
     socket.send(message);
 });
 
@@ -143,5 +145,11 @@ document.addEventListener('keyup', (event) => {
 
 
 socket.addEventListener('message', (event) => {
-    display.textContent = event.data;
+    if (event.data.startsWith('Key pressed: ')){
+        display.textContent = event.data;
+    }
+    
+    if (event.data.startsWith('Dialogue: ')){
+        dialogues.textContent = event.data;
+    }
 });
