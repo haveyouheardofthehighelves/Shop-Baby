@@ -115,6 +115,7 @@ const display = document.getElementById('keypress-display');
 const dialogues = document.getElementById('talkers');
 const inputField = document.getElementById('Dialogue');
 const submitButton = document.querySelector('button');
+const did = document.getElementById('DID');
 
 document.addEventListener('keydown', (event) => {
     if (inputField != document.activeElement){
@@ -126,8 +127,12 @@ document.addEventListener('keydown', (event) => {
 });
 
 submitButton.addEventListener('click', () => {
-    const message = `Dialogue: ${inputField.value}`;
-    dialogues.textContent = `Sent '${inputField.value}' to other client`
+    let message = `Dialogue: ${inputField.value}`;
+    dialogues.textContent = `Sent '${inputField.value}' to other client`;
+    socket.send(message);
+    const ID = String(Math.floor(Math.random() * 10000));
+    did.textContent = `DID: ${ID}`;
+    message = did.textContent;
     socket.send(message);
 });
 
@@ -151,5 +156,9 @@ socket.addEventListener('message', (event) => {
     
     if (event.data.startsWith('Dialogue: ')){
         dialogues.textContent = event.data;
+    }
+
+    if (event.data.startsWith('DID: ')){
+        DID.textContent = event.data;
     }
 });
