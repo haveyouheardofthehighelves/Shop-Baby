@@ -16,6 +16,9 @@ const servers = {
 
 const socket = new WebSocket('wss://192.168.0.77:8080');
 
+let audio_check = true; 
+let video_check = true; 
+
 const init = async () => {
     
     client = await AgoraRTM.createInstance(APP_ID);
@@ -61,7 +64,7 @@ const createPeerConnection = async (MemberId) => {
     document.getElementById('user-2').srcObject = remoteStream;
 
     if (!localStream) {
-        localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true});
         //document.getElementById('user-1').srcObject = localStream;
     }
 
@@ -114,7 +117,9 @@ init();
 const display = document.getElementById('keypress-display');
 const dialogues = document.getElementById('talkers');
 const inputField = document.getElementById('Dialogue');
-const submitButton = document.querySelector('button');
+const submitButton = document.getElementById('submitButton');
+const audioButton = document.getElementById('audioButton');
+const videoButton = document.getElementById('videoButton');
 const did = document.getElementById('DID');
 
 document.addEventListener('keydown', (event) => {
@@ -122,20 +127,42 @@ document.addEventListener('keydown', (event) => {
         const keyName = event.key;
         const message = `Key pressed: ${keyName}`;
         display.textContent = message;
+        localStorage.setItem('keypress', keyName);
         socket.send(message);
     }
 });
 
 submitButton.addEventListener('click', () => {
     let message = `Dialogue: ${inputField.value}`;
+    localStorage.setItem('message', inputField.value);
     dialogues.textContent = `Sent '${inputField.value}' to other client`;
     socket.send(message);
     const ID = String(Math.floor(Math.random() * 10000));
     did.textContent = `DID: ${ID}`;
+    localStorage.setItem('msgID', ID);
     message = did.textContent;
     socket.send(message);
 });
 
+audioButton.addEventListener('click', () => {
+    audio_check = !audio_check;
+    if(!audio_check){
+        audioButton.textContent = `enable audio`;
+    }else{
+        audioButton.textContent = `disable audio`;
+    }
+    localStream.getAudioTracks().forEach(track => track.enabled = audio_check);
+});
+
+videoButton.addEventListener('click', () => {
+    video_check = !video_check;
+    if(!video_check){
+        videoButton.textContent = `enable video`;
+    }else{
+        videoButton.textContent = `disable video`;
+    }
+    localStream.getVideoTracks().forEach(track => track.enabled = video_check);
+});
 
 document.addEventListener('keyup', (event) => {
     const keyName = event.key;
