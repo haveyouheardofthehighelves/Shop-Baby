@@ -125,23 +125,19 @@ const did = document.getElementById('DID');
 document.addEventListener('keydown', (event) => {
     if (inputField != document.activeElement){
         const keyName = event.key;
-        const message = `Key pressed: ${keyName}`;
+        const message = `keypress: ${keyName}`;
         display.textContent = message;
-        localStorage.setItem('keypress', keyName);
-        socket.send(message);
+        socket.send(message)
     }
 });
 
 submitButton.addEventListener('click', () => {
-    let message = `Dialogue: ${inputField.value}`;
-    localStorage.setItem('message', inputField.value);
+    let message = `message: ${inputField.value}`;
     dialogues.textContent = `Sent '${inputField.value}' to other client`;
-    socket.send(message);
+    socket.send(message)
     const ID = String(Math.floor(Math.random() * 10000));
-    did.textContent = `DID: ${ID}`;
-    localStorage.setItem('msgID', ID);
-    message = did.textContent;
-    socket.send(message);
+    did.textContent = `msgID: ${ID}`;
+    socket.send(did.textContent)
 });
 
 audioButton.addEventListener('click', () => {
@@ -166,26 +162,9 @@ videoButton.addEventListener('click', () => {
 
 document.addEventListener('keyup', (event) => {
     const keyName = event.key;
-    const message = `Key released: ${keyName}`;
     // Check if the key released is the same as the key displayed
-    if (display.textContent === `Key pressed: ${keyName}` && inputField != document.activeElement) {
-        display.textContent = `Key pressed: `;
-        socket.send(display.textContent);
-    }
-});
-
-
-
-socket.addEventListener('message', (event) => {
-    if (event.data.startsWith('Key pressed: ')){
-        display.textContent = event.data;
-    }
-    
-    if (event.data.startsWith('Dialogue: ')){
-        dialogues.textContent = event.data;
-    }
-
-    if (event.data.startsWith('DID: ')){
-        DID.textContent = event.data;
+    if (display.textContent === `keypress: ${keyName}` && inputField != document.activeElement) {
+        display.textContent = `keypress: `;
+        socket.send(display.textContent)
     }
 });

@@ -1,24 +1,20 @@
-const socket = new WebSocket('wss://192.168.0.77:777');
-const submitButton = document.getElementById('submitButton');
+const socket = new WebSocket('wss://192.168.0.77:8080');
 
-window.addEventListener('storage', function(event) {
-    if (event.storageArea === localStorage) {
-        if (event.key === 'message' || event.key === 'msgID' || event.key == 'keypress') {
-            var dialogue = localStorage.getItem('message');
-            var ID = localStorage.getItem('msgID');
-            submitButton.textContent = `msgID: ${ID}`
-            // Process or log the values as needed
-            console.log('Message:', dialogue);
-            console.log('Message ID:', ID);
+socket.addEventListener('message', (event) => {
+    console.log('recieved message')
+    const prefixes = ['msgID', 'message', 'keypress'];
+    const data = event.data;
+    console.log(event.data)
+    for (const prefix of prefixes) {
+        if (data.startsWith(prefix)) {
+            const element = document.getElementById(prefix);
+            if (element) {
+                element.textContent = data;
+            }
+            break;
         }
-        socket.send(`${event.key}: ${localStorage.getItem(event.key)}`);
     }
-  });
+});
 
-  socket.addEventListener('message', (event) => {
-        if (event.data.startsWith('msgID')){
-            submitButton.textContent = event.data;
-        }
-    });
   
   
