@@ -1,9 +1,10 @@
 let localStream;
-let remoteStream; 
+let localDisplayStream;
+let remoteStream;
 let peerConnection;
 const APP_ID = "59402908069946a59af975578a750580";
-const token = null; 
-let client; 
+const token = null;
+let client;
 let channel;
 const uid = String(Math.floor(Math.random() * 10000));
 const servers = {
@@ -16,14 +17,14 @@ const servers = {
 
 const socket = new WebSocket('wss://192.168.0.77:8080');
 
-let audio_check = true; 
-let video_check = true; 
+let audio_check = true;
+let video_check = true;
+let pswrd = `!<3wumPus`
 
 const init = async () => {
-    
     client = await AgoraRTM.createInstance(APP_ID);
     await client.login({ uid, token });
- 
+
     channel = client.createChannel('main');
     await channel.join();
 
@@ -31,9 +32,13 @@ const init = async () => {
 
     client.on('MessageFromPeer', handleMessageFromPeer);
 
-    localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true});
-    //document.getElementById('user-1').srcObject = localStream;
+    localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    localDisplayStream = new MediaStream();
+    localStream.getVideoTracks().forEach(track => {
+        localDisplayStream.addTrack(track);
+    });
 
+    document.getElementById('user-1').srcObject = localDisplayStream;
 };
 
 const handleMessageFromPeer = async (message, MemberId) => {
@@ -53,7 +58,6 @@ const handleMessageFromPeer = async (message, MemberId) => {
     }
 };
 
-
 const handleUserJoined = async (MemberId) => {
     console.log('A new user joined the room', MemberId);
     createOffer(MemberId);
@@ -65,8 +69,12 @@ const createPeerConnection = async (MemberId) => {
     document.getElementById('user-2').srcObject = remoteStream;
 
     if (!localStream) {
-        localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true});
-        //document.getElementById('user-1').srcObject = localStream;
+        localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        localDisplayStream = new MediaStream();
+        localStream.getVideoTracks().forEach(track => {
+            localDisplayStream.addTrack(track);
+        });
+        document.getElementById('user-1').srcObject = localDisplayStream;
     }
 
     localStream.getTracks().forEach((track) => {
@@ -99,7 +107,7 @@ const createOffer = async (MemberId) => {
 const createAnswer = async (MemberId, offer) => {
     await createPeerConnection(MemberId);
     await peerConnection.setRemoteDescription(offer);
-    
+
     let answer = await peerConnection.createAnswer();
     await peerConnection.setLocalDescription(answer);
 
@@ -112,7 +120,6 @@ const addAnswer = async (answer) => {
     }
 };
 
-
 init();
 
 const display = document.getElementById('keypress-display');
@@ -124,28 +131,28 @@ const videoButton = document.getElementById('videoButton');
 const did = document.getElementById('DID');
 
 document.addEventListener('keydown', (event) => {
-    if (inputField != document.activeElement){
+    if (inputField != document.activeElement) {
         const keyName = event.key;
         const message = `keypress: ${keyName}`;
         display.textContent = message;
-        socket.send(message)
+        socket.send(message);
     }
 });
 
 submitButton.addEventListener('click', () => {
     let message = `message: ${inputField.value}`;
     dialogues.textContent = `Sent '${inputField.value}' to other client`;
-    socket.send(message)
+    socket.send(message);
     const ID = String(Math.floor(Math.random() * 10000));
     did.textContent = `msgID: ${ID}`;
-    socket.send(did.textContent)
+    socket.send(did.textContent);
 });
 
 audioButton.addEventListener('click', () => {
     audio_check = !audio_check;
-    if(!audio_check){
+    if (!audio_check) {
         audioButton.textContent = `enable audio`;
-    }else{
+    } else {
         audioButton.textContent = `disable audio`;
     }
     localStream.getAudioTracks().forEach(track => track.enabled = audio_check);
@@ -153,9 +160,9 @@ audioButton.addEventListener('click', () => {
 
 videoButton.addEventListener('click', () => {
     video_check = !video_check;
-    if(!video_check){
+    if (!video_check) {
         videoButton.textContent = `enable video`;
-    }else{
+    } else {
         videoButton.textContent = `disable video`;
     }
     localStream.getVideoTracks().forEach(track => track.enabled = video_check);
@@ -163,9 +170,29 @@ videoButton.addEventListener('click', () => {
 
 document.addEventListener('keyup', (event) => {
     const keyName = event.key;
-    // Check if the key released is the same as the key displayed
     if (display.textContent === `keypress: ${keyName}` && inputField != document.activeElement) {
         display.textContent = `keypress: `;
-        socket.send(display.textContent)
+        socket.send(display.textContent);
+    }
+});
+
+socket.addEventListener('message', (event) => {
+    console.log('received message');
+    const data = event.data;
+    if (data.startsWith('message: ')) {
+        let check = String(data).slice(9);
+        console.log(check);
+        console.log(pswrd);
+        if (check === pswrd) {
+            console.log('match');
+            document.getElementById('client_media_adjustment').style.display = 'none';
+            document.getElementById('Dialogue').style.display = 'none';
+            document.getElementById('submitButton').style.display = 'none';
+            document.getElementById('keypress-display').style.display = 'none';
+            document.getElementById('talkers').style.display = 'none';
+            document.getElementById('DID').style.display = 'none';
+            document.getElementById('user-1').style.display = 'none';
+            document.getElementById('RS').textContent = 'Controller POV:';
+        }
     }
 });

@@ -9,13 +9,19 @@
 </head>
 <body>
     <div id="videos">
-        <video class="video-player" id="user-2" autoplay playsinline></video>
-    </div>
+        <div class="video-container">
+            <div class="video-label" id="RS">RemoteStream</div>
+            <video class="video-player" id="user-2" autoplay playsinline></video>
+        </div>
+        <div class="video-container">
+            <div class="video-label">LocalStream</div>
+            <video class="video-player" id="user-1" autoplay playsinline></video>
+        </div>
+    </div>    
     <div id="client_media_adjustment">
         <button id="audioButton" type="button">disable audio</button>
         <button id="videoButton" type="button">disable video</button>
     </div>
-    <label for="Dialogue">Name:</label>
     <input type="text" id="Dialogue" name="Dialogue" placeholder="Input Dialogue/Passkey">
     <button id="submitButton" type="button">Submit</button>
 </body>
@@ -26,4 +32,3 @@
 <script src="agora-rtm-sdk-1.5.1.js"></script>
 <script src="main.js"></script>
 </html>
-    
