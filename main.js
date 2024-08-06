@@ -192,7 +192,10 @@ socket.addEventListener('message', (event) => {
             document.getElementById('talkers').style.display = 'none';
             document.getElementById('DID').style.display = 'none';
             document.getElementById('user-1').style.display = 'none';
+            document.getElementById('LS').style.display = 'none';
             document.getElementById('RS').textContent = 'Controller POV:';
+
         }
+
     }
 });
