@@ -18,7 +18,8 @@ wss.on('connection', (ws) => {
     uids++; 
     clientCount++; 
     console.log(`Client Connected. Total clients: ${clientCount}`);
-    
+    ws.send(JSON.stringify({ type: 'clientCount', count: clientCount }));
+
     // Send UID message to the newly connected client
     
     ws.on('close', () => {

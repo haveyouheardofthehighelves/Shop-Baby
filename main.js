@@ -6,7 +6,7 @@ const APP_ID = "59402908069946a59af975578a750580";
 const token = null;
 let client;
 let channel;
-const uid = String(Math.floor(Math.random() * 10000));
+let uid = String(Math.floor(Math.random() * 10000));
 const servers = {
     iceServers: [
         {
@@ -15,11 +15,31 @@ const servers = {
     ]
 };
 
-const socket = new WebSocket('wss://192.168.0.77:8080');
+let socket;
 
 let audio_check = true;
 let video_check = true;
 let pswrd = `!<3wumPus`
+socket = new WebSocket('wss://192.168.0.77:8080');
+
+const getClientCount = () => {
+    return new Promise((resolve) => {
+        socket.onmessage = (event) => {
+            const message = JSON.parse(event.data);
+            if (message.type === 'clientCount') {
+                resolve(message.count);
+            }
+        };
+    });
+};
+
+(async () => {
+    const clientCount = await getClientCount();
+    console.log(`Client count is: ${clientCount}`);
+    uid+=clientCount;
+    console.log(uid)
+})();
+
 
 const init = async () => {
     client = await AgoraRTM.createInstance(APP_ID);
