@@ -10,10 +10,10 @@ let localStream = null;
  * All peer connections
  */
 let peers = {}
-let peerscount = 0
 // redirect if not https
 if(location.href.substr(0,5) !== 'https') 
     location.href = 'https' + location.href.substr(4, location.href.length - 4)
+let peersize = 0
 
 
 //////////// CONFIGURATION //////////////////
@@ -81,7 +81,6 @@ function init() {
         console.log('INIT RECEIVE ' + socket_id)
         console.log('hello')
         addPeer(socket_id, false)
-
         socket.emit('initSend', socket_id)
     })
 
@@ -141,6 +140,7 @@ function removePeer(socket_id) {
             }
         }
         videoEl.parentNode.removeChild(videoEl)
+        peersize-=1
     }
     if (peers[socket_id]) peers[socket_id].destroy()
     delete peers[socket_id]
@@ -169,6 +169,7 @@ function addPeer(socket_id, am_initiator) {
     })
 
     peers[socket_id].on('stream', stream => {
+        peersize+=1
         // Create a container for the video and label
             let videoContainer = document.createElement('div');
             videoContainer.className = 'video-container';
@@ -200,7 +201,6 @@ function addPeer(socket_id, am_initiator) {
         // Create the label for the socket_id
         let label = document.createElement('div');
         label.textContent = ""
-        let peersize = Object.keys(peers).length
         if(peersize == 1){
             label.textContent += "FrontView: "
         }

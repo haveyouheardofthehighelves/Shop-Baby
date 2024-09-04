@@ -39,6 +39,18 @@ module.exports = (io) => {
             delete peers[socket.id]
         })
 
+        socket.on('keyPress', () => {
+            console.log('socket disconnected ' + socket.id)
+            socket.broadcast.emit('removePeer', socket.id)
+            delete peers[socket.id]
+        })
+
+        socket.on('diaglogue', () => {
+            console.log('socket disconnected ' + socket.id)
+            socket.broadcast.emit('removePeer', socket.id)
+            delete peers[socket.id]
+        })
+
         /**
          * Send message to client to initiate a connection
          * The sender has already setup a peer connection receiver
