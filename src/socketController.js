@@ -39,12 +39,6 @@ module.exports = (io) => {
             delete peers[socket.id]
         })
 
-        socket.on('keyPress', () => {
-            console.log('socket disconnected ' + socket.id)
-            socket.broadcast.emit('removePeer', socket.id)
-            delete peers[socket.id]
-        })
-
         socket.on('diaglogue', () => {
             console.log('socket disconnected ' + socket.id)
             socket.broadcast.emit('removePeer', socket.id)
@@ -67,6 +61,13 @@ module.exports = (io) => {
         socket.on('toggleAudio', socket_id => {
             peers[socket_id].emit('toggleAudio')
         })
-    
+
+        socket.on('keypressed', event => {
+            socket.broadcast.emit('keypressed', event)
+        })
+        
+        socket.on('keyreleased', event => {
+            socket.broadcast.emit('keyreleased', event)
+        })
     })
 }
