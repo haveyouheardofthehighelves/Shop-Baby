@@ -50,6 +50,14 @@
         overflow-y: scroll;
       }
 
+      .black-box {
+        width: 100%;
+        height: 500px;
+        background-color: black;
+        margin-top: 10px;
+        border-radius: 5px;
+      }
+
       .video-container {
         height: calc(50% - 1rem);
       }
@@ -57,6 +65,33 @@
       .vid {
         height: 100%;
       }
+
+      .plus {
+      position: relative;
+      width: 30px;
+      height: 30px;
+    }
+
+    .horizontal, .vertical {
+      position: absolute;
+      background-color: #ffffff;
+    }
+
+    .horizontal {
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      transform: translateY(-50%);
+    }
+
+    .vertical {
+      left: 50%;
+      top: 0;
+      width: 3px;
+      height: 100%;
+      transform: translateX(-50%);
+    }
 
       /* 
       .vid {
@@ -121,12 +156,19 @@
           <input type="text" id="TTS" name="TTS TextBox" /><br /><br />
         </div>
         <button id="submit" onclick="submitCheck()">submit</button>
+        <div class="black-box">
+          <div class="plus">
+            <div class="horizontal"></div>
+            <div class="vertical"></div>
+          </div>
+        </div>
       </div>
     </div>
 
     <div id="videos" class="container"></div>
   </body>
   <footer>
-    <script src="/js/main.js" lang="text/javascript"></script>
+    <script src="/js/WebRTCandSockets.js" lang="text/javascript"></script>
+    <script src="/js/documentInteraction.js" lang="text/javascript"></script>
   </footer>
 </html>

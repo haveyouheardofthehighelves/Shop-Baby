@@ -1,7 +1,10 @@
 /**
  * Socket.io socket
  */
+
+
 let socket;
+let wsServer;
 /**
  * The stream object used to send media
  */
@@ -14,11 +17,6 @@ let peers = {}
 if(location.href.substr(0,5) !== 'https') 
     location.href = 'https' + location.href.substr(4, location.href.length - 4)
 let peersize = 0
-
-let inputField1 = document.getElementById("commands")
-let inputField2 = document.getElementById("TTS")
-
-let prevkey = ""
 
 //////////// CONFIGURATION //////////////////
 
@@ -80,7 +78,7 @@ navigator.mediaDevices.getUserMedia(constraints).then(stream => {
  */
 function init() {
     socket = io()
-
+    wsServer = new WebSocket('wss://10.0.0.102:3013');
     socket.on('initReceive', socket_id => {
         console.log('INIT RECEIVE ' + socket_id)
         console.log('hello')
@@ -376,21 +374,3 @@ function submitCheck() {
 
     }
 }
-
-document.addEventListener('keydown', (event) => {
-    if (inputField1 != document.activeElement && inputField2 != document.activeElement) {
-        const keyName = event.key;
-        if(prevkey != event.key){
-            socket.emit('keypressed', keyName)
-            prevkey = event.key
-        }
-    }
-});
-
-document.addEventListener('keyup', (event) => {
-    if (inputField1 != document.activeElement && inputField2 != document.activeElement) {
-        const keyName = event.key;
-        socket.emit('keyreleased', keyName)
-        prevkey = ""
-    }
-});
