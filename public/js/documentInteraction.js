@@ -31,6 +31,13 @@ function coordinate(event) {
     console.log(`view port coordinates: x: ${event.clientX} y: ${event.clientY}`)
     let mapped_y = map(y,rect.top, rect.bottom, 0, 180)
     let mapped_x = map(x,rect.left, rect.right, 0, 180)
+    const servo_coordinate = {
+        type: 'servo_coordinate',
+        data: {x: mapped_x, y: mapped_y}
+      };
+    if(isClicked){
+        wsServer.send(JSON.stringify(servo_coordinate))
+    }
     console.log(`mapped: (${mapped_x},${mapped_y})`)
 }
 

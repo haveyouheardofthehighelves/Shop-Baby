@@ -13,7 +13,10 @@ async def monitor_websocket(uri):
                 if data['type'] == 'keypress':
                     print(f"key press {data['data']}")
                 if data['type'] == 'keyrelease':
-                    print(f"key release {data['data']}")                
+                    print(f"key release {data['data']}")     
+                if data['type'] == 'servo_coordinate':
+                    print(f"servo mapped angle ({data['data']['x']}, {data['data']['y']})")     
+ 
         except websockets.ConnectionClosed:
             print("Connection closed")
 
