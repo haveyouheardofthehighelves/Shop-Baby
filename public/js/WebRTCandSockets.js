@@ -52,7 +52,7 @@ const configuration = {
  * UserMedia constraints
  */
 let constraints = {
-    audio: false,
+    audio: true,
     video: {
         height: 500,
     }
