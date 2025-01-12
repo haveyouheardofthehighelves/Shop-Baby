@@ -13,6 +13,8 @@ let localStream = null;
  * All peer connections
  */
 let peers = {}
+
+let myID = ""
 // redirect if not https
 if(location.href.substr(0,5) !== 'https') 
     location.href = 'https' + location.href.substr(4, location.href.length - 4)
@@ -81,7 +83,6 @@ function init() {
     wsServer = new WebSocket('wss://10.0.0.102:3013');
     socket.on('initReceive', socket_id => {
         console.log('INIT RECEIVE ' + socket_id)
-        console.log('hello')
         addPeer(socket_id, false)
         socket.emit('initSend', socket_id)
     })
@@ -89,6 +90,25 @@ function init() {
     socket.on('switch', () => {
         switchMedia()
         console.log('switching camera')
+    })
+    
+    socket.on('arm', () => {
+        console.log('arm')
+    })
+
+    socket.on('Your_ID', data => {
+        myID = data
+    })
+
+    socket.on('front', () => {
+        for (const video of videos.children) {
+            if(video.getElementsByClassName("video-label").length != 0){
+                const content = video.getElementsByClassName("video-label")[0].textContent.split(" ");
+                socketID = content[1].trim()
+
+            }
+        }
+        console.log('front ui')
     })
 
     socket.on('toggleAudio', () =>{
@@ -188,27 +208,29 @@ function addPeer(socket_id, am_initiator) {
         newVid.onclick = () => openPictureMode(newVid);
         newVid.ontouchstart = (e) => openPictureMode(newVid);
         
-        newVid.addEventListener('loadedmetadata', () => {
+        /*newVid.addEventListener('loadedmetadata', () => {
             if (newVid.videoWidth < newVid.videoHeight) {
                 newVid.style.transform = 'rotate(90deg)';
-                /*let temp = newVid.videoWidth
+                let temp = newVid.videoWidth
                 newVid.videoWidth = newVid.videoHeight
-                newVid.videoHeight = temp*/
+                newVid.videoHeight = temp
                 console.log(newVid.videoWidth)
                 console.log(newVid.videoHeight)
                 videoContainer.style.padding = `0 ${(newVid.videoHeight - newVid.videoWidth)}`
             }
-        });
+        });*/
 
         // Create the label for the socket_id
         let label = document.createElement('div');
         label.textContent = ""
         if(peersize == 1){
-            label.textContent += "FrontView: "
+            label.textContent += "Front_View: "
         }
-
-        if(peersize == 2){
-            label.textContent += "Elevator Arm: "
+        else if(peersize == 2){
+            label.textContent += "Elevator_Arm: "
+        }
+        else{
+            label.textContent += "Spectator: "
         }
         label.id = `label: ${socket_id}`
         label.className = 'video-label';
@@ -348,29 +370,5 @@ function updateButtons() {
     }
     for (let index in localStream.getAudioTracks()) {
         muteButton.innerText = localStream.getAudioTracks()[index].enabled ? "Unmuted" : "Muted"
-    }
-}
-
-function submitCheck() {
-    const TTS = document.getElementById("TTS");
-    const CMD = document.getElementById("commands");
-    console.log(TTS.value)
-    console.log(CMD.value)
-    let arguments = CMD.value.split(' ')
-    let socketID = arguments[1]
-    console.log(arguments)
-    if(socketID in peers){
-        if(arguments[0] == 'swap'){
-            //swap video feeds (local action)
-        }
-
-        if(arguments[0] == 'switch'){
-            socket.emit('switch', socketID)
-        }
-
-        if(arguments[0] == 'toggleAudio'){
-            socket.emit('toggleAudio', socketID)
-        }
-
     }
 }

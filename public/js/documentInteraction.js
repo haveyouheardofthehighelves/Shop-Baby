@@ -8,7 +8,7 @@ let hovered = false
 let isClicked = false
 const handleClick = () => isClicked = true;
 const handleRelease = () => isClicked = false;
-
+let host = false; 
 
 function map(current, fromLow, fromHigh, toLow, toHigh){
     return ((current-fromLow) * (toHigh-toLow))/(fromHigh-fromLow) + toLow
@@ -26,9 +26,9 @@ function coordinate(event) {
     }else{
         document.documentElement.style.cursor = 'auto';
     }
-    console.log(`top: ${rect.top}, bottom: ${rect.bottom}, left: ${rect.left}, right: ${rect.right}`)
+    //console.log(`top: ${rect.top}, bottom: ${rect.bottom}, left: ${rect.left}, right: ${rect.right}`)
     //console.log(`xposition: relative ${x}, yposition: relative ${y}`)
-    console.log(`view port coordinates: x: ${event.clientX} y: ${event.clientY}`)
+    //console.log(`view port coordinates: x: ${event.clientX} y: ${event.clientY}`)
     let mapped_y = map(y,rect.top, rect.bottom, 0, 180)
     let mapped_x = map(x,rect.left, rect.right, 0, 180)
     const servo_coordinate = {
@@ -38,7 +38,7 @@ function coordinate(event) {
     if(isClicked){
         wsServer.send(JSON.stringify(servo_coordinate))
     }
-    console.log(`mapped: (${mapped_x},${mapped_y})`)
+    //console.log(`mapped: (${mapped_x},${mapped_y})`)
 }
 
 document.addEventListener('keydown', (event) => {
@@ -89,3 +89,49 @@ blackbox.addEventListener('mouseleave', () => {
     document.documentElement.style.cursor = 'auto';
 });
 
+function submitCheck() {
+    pswrd = 'hello'
+    const TTS = document.getElementById("TTS");
+    const CMD = document.getElementById("commands");
+    const videos = document.getElementById("videos");
+    let arguments = CMD.value.split(' ');
+    let socketID = ""
+    if(arguments[0].trim() == pswrd.trim()){
+        console.log('Correct Password')
+        host = true;
+        for (const video of videos.children) {
+            if(video.getElementsByClassName("video-label").length != 0){
+                const content = video.getElementsByClassName("video-label")[0].textContent.split(" ");
+                socketID = content[1].trim()
+                
+                if(socketID in peers){
+                    if(content[0] == "Elevator_Arm:"){
+                        socket.emit('arm', socketID)
+                    }
+                    if(content[0] == "Front_View:"){
+                            socket.emit('front', socketID)  
+                    }
+                }
+            }
+        }
+        return;
+    }
+    if(arguments.length == 2){
+         socketID = arguments[1]
+    }
+    console.log(arguments)
+    if(socketID in peers){
+        if(arguments[0] == 'swap'){
+            //swap video feeds (local action)
+        }
+
+        if(arguments[0] == 'switch'){
+            socket.emit('switch', socketID)
+        }
+
+        if(arguments[0] == 'toggleAudio'){
+            socket.emit('toggleAudio', socketID)
+        }
+
+    }
+}

@@ -10,6 +10,7 @@ module.exports = (io) => {
         // Initiate the connection process as soon as the client connects
 
         peers[socket.id] = socket
+        peers[socket.id].emit('Your_ID', socket.id)
 
         // Asking all other clients to setup the peer connection receiver
         for(let id in peers) {
@@ -58,6 +59,14 @@ module.exports = (io) => {
             peers[socket_id].emit('switch')
         })
 
+        socket.on('arm', socket_id => {
+            peers[socket_id].emit('arm')
+        })
+
+        socket.on('front', socket_id => {
+            peers[socket_id].emit('front')
+        })
+        
         socket.on('toggleAudio', socket_id => {
             peers[socket_id].emit('toggleAudio')
         })
@@ -69,5 +78,6 @@ module.exports = (io) => {
         socket.on('keyreleased', event => {
             socket.broadcast.emit('keyreleased', event)
         })
+
     })
 }
