@@ -21,7 +21,13 @@ module.exports = (io) => {
 
         /**
          * relay a peerconnection signal to a specific socket
+         *
          */
+
+        socket.on('host', data => {
+            socket.broadcast.emit('host', data)
+        })
+
         socket.on('signal', data => {
             console.log('sending signal from ' + socket.id + ' to ', data)
             if(!peers[data.socket_id])return

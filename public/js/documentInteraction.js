@@ -103,7 +103,7 @@ function submitCheck() {
             if(video.getElementsByClassName("video-label").length != 0){
                 const content = video.getElementsByClassName("video-label")[0].textContent.split(" ");
                 socketID = content[1].trim()
-                
+                socket.emit('host', myID)
                 if(socketID in peers){
                     if(content[0] == "Elevator_Arm:"){
                         socket.emit('arm', socketID)

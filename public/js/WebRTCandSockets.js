@@ -15,6 +15,7 @@ let localStream = null;
 let peers = {}
 
 let myID = ""
+let hostID = ""
 // redirect if not https
 if(location.href.substr(0,5) !== 'https') 
     location.href = 'https' + location.href.substr(4, location.href.length - 4)
@@ -80,7 +81,7 @@ navigator.mediaDevices.getUserMedia(constraints).then(stream => {
  */
 function init() {
     socket = io()
-    wsServer = new WebSocket('wss://10.0.0.102:3013');
+    wsServer = new WebSocket('wss://100.121.155.88:3013');
     socket.on('initReceive', socket_id => {
         console.log('INIT RECEIVE ' + socket_id)
         addPeer(socket_id, false)
@@ -93,23 +94,39 @@ function init() {
     })
     
     socket.on('arm', () => {
-        console.log('arm')
+        //window.location.href = "host_feed.html"
     })
 
     socket.on('Your_ID', data => {
         myID = data
     })
 
-    socket.on('front', () => {
-        for (const video of videos.children) {
-            if(video.getElementsByClassName("video-label").length != 0){
-                const content = video.getElementsByClassName("video-label")[0].textContent.split(" ");
-                socketID = content[1].trim()
+    socket.on('host', data =>{
+        hostID = data
+    })
 
+    socket.on('front', () => {
+        localVideo.style.display = "none"
+        for (const video of videos.children) {
+            if (video.getElementsByClassName("video-label").length != 0) {
+                const content = video.getElementsByClassName("video-label")[0].textContent.split(" ");
+                socketID = content[1].trim();
+                if (socketID == hostID) {
+                    // Move the video element to the center of the page
+                    video.style.position = "fixed";
+                    video.style.top = "50%";
+                    video.style.left = "50%";
+                    video.style.transform = "translate(-50%, -50%)";
+                    video.style.zIndex = "1000"; // Ensure it's above other elements
+                    video.className = "vid"
+                }else{
+                    video.style.display = "none"
+                    
+                }
             }
         }
-        console.log('front ui')
-    })
+    });
+    
 
     socket.on('toggleAudio', () =>{
         toggleMute()
