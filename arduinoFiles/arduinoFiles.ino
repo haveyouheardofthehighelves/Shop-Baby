@@ -8,7 +8,7 @@ String hello= "";
 void setup() {
   Serial.begin(9600);
   digitalWrite(servo1pin, OUTPUT); 
-  digitalWrite(servo2pin, OUTPUT); 
+  digitalWrite(servo2pin, OUTPUT);  
   myservo.attach(servo1pin);
   myservo2.attach(servo2pin); 
   myservo.write(90); 

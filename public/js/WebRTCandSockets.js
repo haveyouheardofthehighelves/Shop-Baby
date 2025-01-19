@@ -107,6 +107,7 @@ function init() {
 
     socket.on('front', () => {
         localVideo.style.display = "none"
+        document.getElementById("Local-Label").style.display = "none"
         for (const video of videos.children) {
             if (video.getElementsByClassName("video-label").length != 0) {
                 const content = video.getElementsByClassName("video-label")[0].textContent.split(" ");
@@ -119,11 +120,15 @@ function init() {
                     video.style.transform = "translate(-50%, -50%)";
                     video.style.zIndex = "1000"; // Ensure it's above other elements
                     video.className = "vid"
+                    video.getElementsByClassName("video-label")[0].textContent = "Host Feed"
                 }else{
                     video.style.display = "none"
-                    
                 }
             }
+        }
+        control_array = document.getElementsByClassName('control')
+        for (let i = 0; i < control_array.length; i++) {
+            control_array[i].style.display = "none"
         }
     });
     

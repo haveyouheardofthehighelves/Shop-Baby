@@ -31,7 +31,7 @@ async def monitor_websocket(uri):
             print("Connection closed")
 
 # Replace 'wss://example.com/websocket' with your WebSocket URL
-uri = "wss://10.0.0.102:3013"
+uri = "wss://100.121.155.88:3013"
 
 # Start monitoring the WebSocket
 asyncio.get_event_loop().run_until_complete(monitor_websocket(uri))
